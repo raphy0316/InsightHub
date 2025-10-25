@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    container_name: ih-api
+    env_file: ../.env
+    ports:
+      - "${API_PORT-8000}:8000"
+    volumes:
+      - ../apps/api:/app
+    restart: unless-stopped
+  postgres:
+    image: postgres:16
+    container_name: ih-postgres
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    ports:
+      - "${PG_EXPOSE_PORT-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+
+
