@@ -1,31 +1,85 @@
 version: "3.9"
 services:
-  api:
-    build:
-      context: ..
-      dockerfile: apps/api/Dockerfile
-    container_name: ih-api
-    env_file: ../.env
-    ports:
-      - "${API_PORT-8000}:8000"
-    volumes:
-      - ../apps/api:/app
-    restart: unless-stopped
-    depends_on:
-      - postgres
-  
-  postgres:
-    image: postgres:16
-    container_name: ih-postgres
+  db:
+    image: postgres:15
     environment:
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_DB: ${PG_DB}
-    ports:
-      - "${PG_EXPOSE_PORT-5432}:5432"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    restart: unless-stopped
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      retries: 10
+  
+  api:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ../services/api:/app
+    env_file: ../.env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+  
+  redis:
+    image: redis:7
+  
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    
+  createbuckets:
+    image: quay.io/minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${S3_ACCESS_KEY} ${S3_SECRET_KEY};
+      mc mb -p local/${S3_BUCKET_MODELS};
+      mc mb -p local/${S3_BUCKET_ADAPTERS};
+      exit 0;
+      "
+
+  worker-pt:
+    image: pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime
+    working_dir: /app
+    volumes:
+      - ../services/runners/pt-runner:/app
+    env_file: ../.env
+    depends_on: [redis, minio]
+    environment:
+      DRY_RUN: "1"
+    command: sh -c "pip install -r requirements.txt && celery -A worker.app worker -Q ${QUEUE_PT} -n pt@%h --concurrency=1"
+  
+  worker-onnx:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ../services/runners/onnx-runner:/app
+    env_file: ../.env
+    depends_on: [redis, minio]
+    environment:
+      DRY_RUN: "1"
+    command: sh -c "pip install -r requirements.txt && celery -A worker.app worker -Q ${QUEUE_ONNX} -n onnx@%h --concurrency=1"
   
   prometheus:
     image: prom/prometheus:latest
@@ -61,8 +115,7 @@ services:
       - prometheus
 
 volumes:
-  pgdata:
+  dbdata:
+  minio:
   prometheus-data:
-  grafana-data:
-
-
+  grafana-data
