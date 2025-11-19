@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from app.routers.health import router as health_router
+from app.routers.models import router as models_router
 import time
 
 app = FastAPI(title="InsightHub API", version="0.1")
@@ -45,6 +46,7 @@ def metrics():
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 app.include_router(health_router)
+app.include_router(models_router)
 
 @app.get("/")
 def root():

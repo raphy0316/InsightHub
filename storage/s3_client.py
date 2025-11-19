@@ -26,3 +26,4 @@ def get_s3_client() :
 s3_client = get_s3_client()
 S3_BUCKET_MODELS = settings.S3_BUCKET_MODELS
 S3_BUCKET_ADAPTERS = settings.S3_BUCKET_ADAPTERS
+S3_BUCKET_DATASETS = settings.S3_BUCKET_DATASETS

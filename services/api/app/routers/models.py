@@ -1,9 +1,10 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from services.storage_service import save_model_file
+from pathlib import Path
+from app.services.storage_service import save_model_file
 
 router = APIRouter(prefix="/models", tags=["models"])
 
-@router.post("/models/upload")
+@router.post("/upload")
 async def upload_model(
     file: UploadFile = File(...),
     name: str = Form(...),
