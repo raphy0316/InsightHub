@@ -118,4 +118,4 @@ volumes:
   dbdata:
   minio:
   prometheus-data:
-  grafana-data
+  grafana-data:
