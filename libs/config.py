@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         return (
-            f"postgresql+psycopg2://{self.POSTGRES_USER}:"
+            f"postgresql+psycopg://{self.POSTGRES_USER}:"
             f"{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:"
             f"{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     S3_REGION: str = "us-east-1"
     S3_BUCKET_MODELS: str = "models"
     S3_BUCKET_ADAPTERS: str = "adapters"
+
+    # ===== JWT Auth =====
+    JWT_SECRET_KEY: str = Field(..., description="Secret key for signing JWTs")
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
     # ===== Queues for Runners =====
     QUEUE_PT: str = "pt"
