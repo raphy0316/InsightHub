@@ -11,4 +11,3 @@ class Team(ORMBaseModel):
 
     projects = relationship("Project", back_populates="team")
     members = relationship("TeamMember", back_populates="team")
-    users = relationship("User", secondary="team_members", back_populates="teams")

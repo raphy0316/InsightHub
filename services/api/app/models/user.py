@@ -13,3 +13,4 @@ class User(ORMBaseModel):
     hashed_password = Column(String(255), nullable=False)
 
     projects = relationship("Project", back_populates="owner")
+    teams = relationship("TeamMember", back_populates="user")
