@@ -68,3 +68,29 @@ async def get_current_user(
     return user
 
 
+async def get_current_user_optional(
+    token: Optional[str] = Depends(oauth2_scheme_optional),
+    db: Session = Depends(get_db),
+):
+    """Optional authentication - returns None if no token provided"""
+    from ..models.user import User
+    if token is None:
+        return None
+    
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        uid = payload.get("user_id")
+        if uid is None:
+            return None
+
+        token_data = TokenData(
+            user_id=str(uid),
+            username=payload.get("username"),
+            email=payload.get("email"),
+        )
+    except JWTError:
+        return None
+
+    from ..services.user_service import UserService
+    user = UserService.get_by_id(db, token_data.user_id)
+    return user

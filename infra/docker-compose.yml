@@ -2,6 +2,7 @@ version: "3.9"
 services:
   db:
     image: postgres:15
+    env_file: ../.env # TODO: 환경변수 파일 root directory로 설정
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -18,6 +19,9 @@ services:
     working_dir: /app
     volumes:
       - ../services/api:/app
+      - ../libs:/workspace/libs
+    environment:
+      - PYTHONPATH=/workspace:/app
     env_file: ../.env
     depends_on:
       db:
