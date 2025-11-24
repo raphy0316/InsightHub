@@ -1,6 +1,6 @@
 from .session import engine
 from ..models.base import Base
-from ..models import user  # 다른 모델 생기면 여기에서 import
+from ..models import user, team, team_member, project  # 다른 모델 생기면 여기에서 import
 
 def init_db():
     print("Creating tables...")

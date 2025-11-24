@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum
+from sqlalchemy import Column, String, ForeignKey, Enum
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from .base import ORMBaseModel
 
@@ -6,8 +7,8 @@ from .base import ORMBaseModel
 class Project(ORMBaseModel):
     __tablename__ = "projects"
 
-    team_id = Column(Integer, ForeignKey("teams.id"), nullable=False)
-    owner_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    team_id = Column(UUID(as_uuid=True), ForeignKey("teams.id"), nullable=False)
+    owner_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     name = Column(String(50), nullable=False)
     description = Column(String(255), nullable=False)
     status = Column(

@@ -3,6 +3,9 @@ from .auth import Token, TokenData
 from .project import ProjectCreate, ProjectRead
 from .team import TeamCreate, TeamRead
 
-__all__ = ["UserCreate", "UserRead", "Token", "TokenData", "ProjectCreate", "ProjectRead", "TeamCreate", "TeamRead"]
+__all__ = ["UserCreate", "UserRead", "Token", "TokenData", 
+"ProjectCreate", "ProjectRead", "ProjectUpdate", 
+"TeamCreate", "TeamRead", 
+"TeamMemberCreate", "TeamMemberRead"]
 
 

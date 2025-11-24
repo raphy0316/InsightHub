@@ -19,11 +19,3 @@ class TeamRead(TeamBase):
         from_attributes = True
 
 
-class TeamMemberRead(BaseModel):
-    id: UUID
-    user_id: UUID
-    team_id: UUID
-    created_at: datetime
-    
-    class Config:
-        from_attributes = True
