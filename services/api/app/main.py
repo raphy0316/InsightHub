@@ -7,6 +7,7 @@ from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_
 
 from .routers.health import router as health_router
 from .routers.auth import router as auth_router
+from .routers.project import router as project_router
 
 from .schemas.common import Response as APIResponse
 
@@ -87,6 +88,7 @@ async def validation_exception_handler(request, exc: RequestValidationError):
 
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(project_router)
 
 
 @app.get("/")
