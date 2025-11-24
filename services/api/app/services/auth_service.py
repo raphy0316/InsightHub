@@ -11,23 +11,23 @@ from ..core.security import (
 
 class AuthService:
     @staticmethod
-    def authenticate_user(db: Session, username: str, password: str):
+    def authenticate_user(db: Session, email: str, password: str):
 
         from .user_service import UserService
 
-        # username 으로 사용자 조회
-        user = UserService.get_by_username(db, username)
+        # email 로 사용자 조회
+        user = UserService.get_by_email(db, email)
         if not user or not verify_password(password, user.hashed_password):
             return None
         return user
 
     @staticmethod
-    def create_login_token(db: Session, username: str, password: str) -> str:
-        user = AuthService.authenticate_user(db, username, password)
+    def create_login_token(db: Session, email: str, password: str) -> str:
+        user = AuthService.authenticate_user(db, email, password)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
+                detail="Incorrect email or password",
             )
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
