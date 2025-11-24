@@ -1,15 +1,15 @@
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .user import UserRead
 from .team import TeamRead
 
 
 class ProjectBase(BaseModel):
-    name: str
-    description: str
-    status: str
+    name: str = Field(..., min_length=1, max_length=100)
+    description: str = Field(..., min_length=1, max_length=255)
+    status: str = Field(..., min_length=1)
 
 
 class ProjectCreate(ProjectBase):

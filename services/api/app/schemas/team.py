@@ -1,10 +1,10 @@
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TeamBase(BaseModel):
-    name: str
+    name: str = Field(..., min_length=1, max_length=100)
     description: str
 
 class TeamCreate(TeamBase):
