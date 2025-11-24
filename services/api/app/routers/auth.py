@@ -30,8 +30,12 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
+    #  OAuth2PasswordRequestForm 의 username 필드에는 email 이 들어옴.
+    # TODO: 변경 고려
+    email = form_data.username
+
     access_token = AuthService.create_login_token(
-        db, form_data.username, form_data.password
+        db, email, form_data.password
     )
     return Response(
         success=True,
