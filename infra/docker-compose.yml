@@ -18,6 +18,8 @@ services:
     working_dir: /app
     volumes:
       - ../services/api:/app
+      - ../storage:/app/storage
+      - ../libs:/app/libs
     env_file: ../.env
     depends_on:
       db:
