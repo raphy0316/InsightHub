@@ -29,3 +29,4 @@ python-multipart==0.0.9
 
 # Monitoring
 prometheus-client==0.20.0
+pydantic-settings==2.3.4

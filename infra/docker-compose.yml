@@ -20,6 +20,7 @@ services:
     volumes:
       - ../services/api:/app
       - ../libs:/workspace/libs
+      - ../storage:/workspace/storage
     environment:
       - PYTHONPATH=/workspace:/app
     env_file: ../.env

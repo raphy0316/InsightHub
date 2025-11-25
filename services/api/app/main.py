@@ -4,8 +4,8 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-
-from .routers.health import router as health_router
+from app.routers.health import router as health_router
+from app.routers.models import router as models_router
 from .routers.auth import router as auth_router
 from .routers.project import router as project_router
 
@@ -87,6 +87,7 @@ async def validation_exception_handler(request, exc: RequestValidationError):
 
 
 app.include_router(health_router)
+app.include_router(models_router)
 app.include_router(auth_router)
 app.include_router(project_router)
 

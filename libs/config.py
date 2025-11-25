@@ -1,6 +1,7 @@
 # libs/config.py
 from pydantic_settings import BaseSettings
 from pydantic import Field
+from typing import Literal
 
 class Settings(BaseSettings):
     # ===== Database Settings =====
@@ -23,6 +24,9 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str
     CELERY_BACKEND_URL: str
 
+    # ===== Storage Backend =====
+    STORAGE_BACKEND: Literal["minio", "aws"] = "minio"
+
     # ===== S3 / MinIO =====
     S3_ENDPOINT: str = Field(..., description="MinIO or S3 endpoint URL e.g. http://minio:9000")
     S3_ACCESS_KEY: str
@@ -30,6 +34,7 @@ class Settings(BaseSettings):
     S3_REGION: str = "us-east-1"
     S3_BUCKET_MODELS: str = "models"
     S3_BUCKET_ADAPTERS: str = "adapters"
+    S3_BUCKET_DATASETS: str = "datasets"
 
     # ===== JWT Auth =====
     JWT_SECRET_KEY: str = Field(..., description="Secret key for signing JWTs")
