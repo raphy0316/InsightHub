@@ -8,7 +8,7 @@ from app.routers.health import router as health_router
 from app.routers.models import router as models_router
 from .routers.auth import router as auth_router
 from .routers.project import router as project_router
-
+from .routers.debug import router as debug_router
 from .schemas.common import Response as APIResponse
 
 import time
@@ -90,6 +90,7 @@ app.include_router(health_router)
 app.include_router(models_router)
 app.include_router(auth_router)
 app.include_router(project_router)
+app.include_router(debug_router)
 
 
 @app.get("/")

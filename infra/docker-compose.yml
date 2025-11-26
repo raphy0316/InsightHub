@@ -69,22 +69,28 @@ services:
     working_dir: /app
     volumes:
       - ../services/runners/pt-runner:/app
+      - ../libs:/workspace/libs
+      - ../storage:/workspace/storage    
     env_file: ../.env
     depends_on: [redis, minio]
     environment:
-      DRY_RUN: "1"
-    command: sh -c "pip install -r requirements.txt && celery -A worker.app worker -Q ${QUEUE_PT} -n pt@%h --concurrency=1"
+      - PYTHONPATH=/workspace:/app
+      - DRY_RUN=1
+    command: sh -c "pip install -r requirements.txt && celery -A worker worker -Q ${QUEUE_PT} -n pt@%h --concurrency=1"
   
   worker-onnx:
     image: python:3.11-slim
     working_dir: /app
     volumes:
       - ../services/runners/onnx-runner:/app
+      - ../libs:/workspace/libs
+      - ../storage:/workspace/storage    
     env_file: ../.env
     depends_on: [redis, minio]
     environment:
-      DRY_RUN: "1"
-    command: sh -c "pip install -r requirements.txt && celery -A worker.app worker -Q ${QUEUE_ONNX} -n onnx@%h --concurrency=1"
+      - PYTHONPATH=/workspace:/app
+      - DRY_RUN=1
+    command: sh -c "pip install -r requirements.txt && celery -A worker worker -Q ${QUEUE_ONNX} -n onnx@%h --concurrency=1"
   
   prometheus:
     image: prom/prometheus:latest
